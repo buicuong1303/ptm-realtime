@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  php_text_message-real_time:
+    container_name: php_text_message-real_time
+    image: php_text_message-real_time
+    build:
+      context: ./ #where Dockerfile to build
+      target: development
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 3101:3000
+      - 9301:9229
+    # command: yarn run start
+    command: yarn run start:dev
+    # command: yarn run start:debug
+    env_file: 
+      - .env
+  
+  php_text_message-redis-socket:
+    ports:
+      - 6501:6379
+    command: [sh, -c, "rm -f /data/dump.rdb && redis-server --requirepass redis"] # non-persistence
+
+  php_text_message-redis-cache:
+    ports:
+      - 6502:6379
+    command: [sh, -c, "rm -f /data/dump.rdb && redis-server --requirepass redis"] # non-persistence

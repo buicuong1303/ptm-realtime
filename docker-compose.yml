@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  php_text_message-real_time:
+    networks:
+      - php_text_message-network
+    depends_on:
+      - php_text_message-redis-socket
+  
+  php_text_message-redis-socket:
+    image: redis:alpine
+    container_name: php_text_message-redis-socket
+    hostname: php_text_message-redis-socket
+    volumes:
+      - php_text_message-redis-socket-data:/data
+    networks:
+      - php_text_message-network
+
+  php_text_message-redis-cache:
+    image: redis:alpine
+    container_name: php_text_message-redis-cache
+    hostname: php_text_message-redis-cache
+    volumes:
+      - php_text_message-redis-cache-data:/data
+    networks:
+      - php_text_message-network
+
+networks:
+  php_text_message-network:
+    name: php_text_message-network
+
+volumes:
+  php_text_message-redis-socket-data:
+    name: php_text_message-redis-socket-data
+  php_text_message-redis-cache-data:
+    name: php_text_message-redis-cache-data

@@ -1,0 +1,92 @@
+variables:
+  PROJECT: $CI_PROJECT_NAME
+  BRANCH: $CI_COMMIT_REF_NAME
+
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+  IMAGE_TAG: $CI_COMMIT_SHA
+  
+  USERNAME: $GITLAB_USERNAME
+  PASSWORD: $GITLAB_PASSWORD
+
+  REGISTRY: $CI_REGISTRY
+  REPOSITORY: $CI_PROJECT_URL
+
+  TAG_NAME: $CI_COMMIT_REF_NAME
+stages:
+  - build
+
+build_development:
+  stage: build
+
+  before_script:
+    - docker info
+    - docker login -u $USERNAME -p $PASSWORD $REGISTRY
+
+  script:
+    # clean before image
+    - echo "Start clean cache image..."
+    - docker image prune --force
+    - docker images -a | grep "${IMAGE_NAME}" | awk '{print $3}' | xargs docker rmi --force || true
+    - echo "Clean cache image successfully!"
+
+    - echo "Start building Realtime..."
+    - docker pull ${IMAGE_NAME}:latest || true
+    - docker build . --target production --cache-from ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${TAG_NAME}
+    - docker push ${IMAGE_NAME}:${TAG_NAME}
+    - echo "Build Realtime successfully!"
+  tags:
+     - build-runner
+  when: manual
+  only:
+    - develop
+
+build_staging:
+  stage: build
+
+  before_script:
+    - docker info
+    - docker login -u $USERNAME -p $PASSWORD $REGISTRY
+
+  script:
+    # clean before image
+    - echo "Start clean cache image..."
+    - docker image prune --force
+    - docker images -a | grep "${IMAGE_NAME}" | awk '{print $3}' | xargs docker rmi --force || true
+    - echo "Clean cache image successfully!"
+
+    - echo "Start building Realtime..."
+    - docker pull ${IMAGE_NAME}:latest || true
+    - docker build . --target production --cache-from ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${TAG_NAME}
+    - docker push ${IMAGE_NAME}:${TAG_NAME}
+    - echo "Build Realtime successfully!"
+  tags:
+     - build-runner
+  when: manual
+  only:
+    - staging
+
+build_production:
+  stage: build
+
+  before_script:
+    - docker info
+    - docker login -u $USERNAME -p $PASSWORD $REGISTRY
+
+  script:
+    # clean before image
+    - echo "Start clean cache image..."
+    - docker image prune --force
+    - docker images -a | grep "${IMAGE_NAME}" | awk '{print $3}' | xargs docker rmi --force || true
+    - echo "Clean cache image successfully!"
+
+    - echo "Start building Realtime..."
+    - docker pull ${IMAGE_NAME}:latest || true
+    - docker build . --target production --cache-from ${IMAGE_NAME}:latest --tag ${IMAGE_NAME}:${TAG_NAME} --tag ${IMAGE_NAME}:latest
+    - docker push ${IMAGE_NAME}:${TAG_NAME}
+    - docker push ${IMAGE_NAME}:latest
+    - echo "Build Realtime successfully!"
+  tags:
+     - build-runner
+  when: manual
+  only:
+    - tags

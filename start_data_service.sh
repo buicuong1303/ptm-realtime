@@ -1,0 +1,1 @@
+docker-compose up php_text_message-redis-socket php_text_message-redis-cache

@@ -1,0 +1,30 @@
+PORT=3000
+
+# Prefix path
+PREFIX_PATH=/realtime
+
+# redis-socket
+RDS_HOST=php_text_message-redis-socket
+RDS_PASSWD=redis
+RDS_PORT=6379
+
+# redis-cache
+RDC_HOST=php_text_message-redis-cache
+RDC_PASSWD=redis
+RDC_PORT=6379
+
+# redis-queue
+RDQ_HOST=php_text_message-redis-queue
+RDQ_PASSWD=redis
+RDQ_PORT=6379
+
+# rabbitmq
+RABBITMQ_ERLANG_COOKIE=erlang_cookie_secret
+RABBITMQ_DEFAULT_VHOST=/
+RABBITMQ_DEFAULT_USER=rabbitmq 
+RABBITMQ_DEFAULT_PASS=rabbitmq
+RABBITMQ_HOST=php_text_message-rabbitmq
+RABBITMQ_PORT=5672
+
+# jwt
+JWT_SECRET=phpswteam
